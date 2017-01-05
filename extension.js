@@ -180,8 +180,6 @@ function updatePostTitle (post) {
 	/* В любом случае нельзя поставить себе +rep) */
 	if (plusRep !== null) {
 		plusRep.src = getURL('/images/plus-reputation.png');
-	} else {
-
 	}
 
 	var minusRep = $('.pairsInlineminus img',post);
