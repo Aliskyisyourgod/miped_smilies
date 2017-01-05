@@ -73,6 +73,12 @@ var userTitles = {
 		background: {
 			name: 'logequm.gif'
 		}
+	},
+	'XUYAch19': {
+		name: '<strong>дошик</strong>',
+		background: {
+			name: 'huyach19.png'
+		}
 	}
 };
 
