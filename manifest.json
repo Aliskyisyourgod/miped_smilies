@@ -1,0 +1,28 @@
+{
+	"name": "MipedSmiles",
+	"description": "Использование сторонних смайлов для сообщений на miped.ru",
+	"permissions": [ "cookies", "*://miped.ru/*" ],
+	"version": "0.5.0.0",
+	"manifest_version": 2,
+	"content_scripts": [{
+		"css": ["extension.css"],
+		"js": ["extension.js"],
+		"matches": ["*://miped.ru/f/*"]
+	}],
+	"icons": {
+		"128": "/images/favicon.png",
+        "16": "/images/favicon.png",
+        "48": "/images/favicon.png"
+	},
+	"update_url": "https://clients2.google.com/service/update2/crx",
+	"web_accessible_resources": [
+		"/assets/settings.html",
+		"/images/banner/*.png",
+		"/images/banner/*.gif",
+		"/images/banner/*.jpg",
+		"/assets/smiles.txt",
+		"/images/*.png",
+		"/images/*.gif",
+		"/images/*.jpg"
+	]
+}
