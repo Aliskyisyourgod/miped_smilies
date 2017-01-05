@@ -181,7 +181,7 @@ function updatePostTitle (post) {
 	if (plusRep !== null) {
 		plusRep.src = getURL('/images/plus-reputation.png');
 	} else {
-		
+
 	}
 
 	var minusRep = $('.pairsInlineminus img',post);
@@ -396,6 +396,10 @@ if (controller === 'member') {
 	var content = $('#content');
 
 	content.classList.add('miped-member');
+
+	$$('.messageSimple img',content).forEach(function(avatar){
+		avatar.src = avatar.src.replace(/\/s\//i,'/l/');
+	})
 
 	/**
 	 * TODO: Добавить аватарку в профиль
