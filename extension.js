@@ -4,7 +4,7 @@
  * @var Системные, на них завязан некоторый функционал
  */
 var queryIsSimple = /^(#?[\w-]+|\.[\w-.]+)$/, eventsList = [], storageCache = _getStorage(), 
-	bodyFrame = window.frames[0].document.body, content;
+	bodyFrame, content;
 
 /* Очистка консоли от мусора */
 console.clear();
@@ -175,6 +175,12 @@ setStorage('theme',isDarkTheme);
 log('Активирована «'+(isDarkTheme?'тёмная':'светлая')+'» тема');
 
 $('html').classList.add(isDarkTheme?'miped-theme-dark':'miped-theme-light');
+
+if (controller == 'threads') {
+	bodyFrame = window.frames[0].document.body;
+} else {
+	bodyFrame = null;
+}
 
 /**
  * ----
