@@ -176,7 +176,7 @@ log('Активирована «'+(isDarkTheme?'тёмная':'светлая')+
 
 $('html').classList.add(isDarkTheme?'miped-theme-dark':'miped-theme-light');
 
-if (controller == 'threads') {
+if (window.frames[0].document.body) {
 	bodyFrame = window.frames[0].document.body;
 } else {
 	bodyFrame = null;
