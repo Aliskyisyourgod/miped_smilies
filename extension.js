@@ -3,7 +3,8 @@
 /**
  * @var Системные, на них завязан некоторый функционал
  */
-var queryIsSimple = /^(#?[\w-]+|\.[\w-.]+)$/, eventsList = [], storageCache = _getStorage();
+var queryIsSimple = /^(#?[\w-]+|\.[\w-.]+)$/, eventsList = [], storageCache = _getStorage(), 
+	bodyFrame = window.frames[0].document.body, content;
 
 /* Очистка консоли от мусора */
 console.clear();
@@ -16,13 +17,7 @@ document.body.style.opacity = 1;
  */
 var userTitles = {
 	'Aлександр': {
-		name: '<strong>Создатель MipedSmiles</strong>',
-		background: {
-			color: '#000',
-		},
-		emHandler: function(em){
-			em.style.color = '#fff';
-		}
+		name: '<strong>Создатель MipedSmiles</strong>'
 	},
 	'Negezor': {
 		background: {
@@ -83,9 +78,62 @@ var userTitles = {
 };
 
 /**
+ * Тут заполнять автозамену смайлов
+ */
+var smilies = {
+    ':D': 'https://vk.com/images/emoji/D83DDE02.png',
+	':(': 'http://vk.com/images/emoji/D83DDE12.png',
+	':)': 'http://vk.com/images/emoji/263A.png',
+	':o': 'https://vk.com/images/emoji/D83DDE31.png',
+	':*': 'https://vk.com/images/emoji/D83DDE18.png',
+	'4Head': 'https://static-cdn.jtvnw.net/emoticons/v1/354/1.0',
+	'BabyRage': 'https://static-cdn.jtvnw.net/emoticons/v1/22639/1.0',
+	'FailFish': 'https://static-cdn.jtvnw.net/emoticons/v1/360/1.0',
+	'huiBunt': 'https://static-cdn.jtvnw.net/emoticons/v1/87532/1.0',
+	'322': 'https://static-cdn.jtvnw.net/emoticons/v1/28048/1.0',
+	'Keepo': 'https://static-cdn.jtvnw.net/emoticons/v1/1902/1.0',
+	'BibleThump': 'https://static-cdn.jtvnw.net/emoticons/v1/86/1.0',
+	'deIlluminati': 'https://static-cdn.jtvnw.net/emoticons/v1/46248/1.0',
+	'KappaClaus': 'https://static-cdn.jtvnw.net/emoticons/v1/74510/1.0',
+	'KappaPride': 'https://static-cdn.jtvnw.net/emoticons/v1/55338/1.0',
+    'kappa': 'https://static-cdn.jtvnw.net/emoticons/v1/25/1.0',
+	'WutFace': 'https://static-cdn.jtvnw.net/emoticons/v1/28087/1.0',
+	'ANELE': 'https://static-cdn.jtvnw.net/emoticons/v1/3792/1.0',
+	'KappaHD': 'https://static-cdn.jtvnw.net/jtv_user_pictures/emoticon-2867-src-f02f9d40f66f0840-28x28.png',
+	'ru': 'http://vk.com/images/emoji/D83CDDF7D83CDDFA.png',
+	'ua': 'http://vk.com/images/emoji/D83CDDFAD83CDDE6.png',
+	'bu': 'http://vk.com/images/emoji/D83CDDE7D83CDDFE.png',
+	'kz': 'http://vk.com/images/emoji/D83CDDF0D83CDDFF.png',
+	'спасибо': 'https://static-cdn.jtvnw.net/emoticons/v1/15020/1.0',
+	'duckFace': 'https://static-cdn.jtvnw.net/emoticons/v1/50017/1.0',
+	'butthurt': 'https://static-cdn.jtvnw.net/emoticons/v1/85693/1.0',
+	'gg': 'https://static-cdn.jtvnw.net/emoticons/v1/55571/1.0',
+	'EleGiggle': 'https://static-cdn.jtvnw.net/emoticons/v1/4339/1.0',
+	'SwiftRage': 'https://static-cdn.jtvnw.net/emoticons/v1/34/1.0',
+	'VoteYea': 'https://static-cdn.jtvnw.net/emoticons/v1/106293/1.0',
+	'VoteNay': 'https://static-cdn.jtvnw.net/emoticons/v1/106294/1.0',
+	'хмм': 'https://static-cdn.jtvnw.net/emoticons/v1/40073/1.0',
+	'хм': 'https://static-cdn.jtvnw.net/emoticons/v1/40073/1.0',
+	'hype': 'https://static-cdn.jtvnw.net/emoticons/v1/50739/1.0',
+	'хайп': 'https://static-cdn.jtvnw.net/emoticons/v1/50739/1.0'
+},
+on('#QuickReply','mouseover','.button',function(){
+    content = bodyFrame.innerHTML;
+
+    for (var key in smilies) {
+        content = content.replace(
+            new RegExp(key,'ig'),
+            '<img src="'+smilies[key]+'" class="miped-smile">'
+        );
+    }
+
+    bodyFrame.innerHTML = content;
+});
+
+/**
  * ----
  *
- * Определение некотрых элементов форума
+ * Определение некоторых элементов форума
  *
  * ----
  */
@@ -186,6 +234,8 @@ function updatePostTitle (post) {
 	/* В любом случае нельзя поставить себе +rep) */
 	if (plusRep !== null) {
 		plusRep.src = getURL('/images/plus-reputation.png');
+	} else {
+
 	}
 
 	var minusRep = $('.pairsInlineminus img',post);
