@@ -74,10 +74,13 @@ http://vk.com/images/emoji/D83CDDF0D83CDDFF.png
 [twitch]
 https://static-cdn.jtvnw.net/emoticons/v1/28087/1.0
 https://static-cdn.jtvnw.net/emoticons/v1/68856/1.0
+https://static-cdn.jtvnw.net/emoticons/v1/4339/1.0
 https://static-cdn.jtvnw.net/jtv_user_pictures/emoticon-2867-src-f02f9d40f66f0840-28x28.png
 https://static-cdn.jtvnw.net/emoticons/v1/354/1.0
 https://static-cdn.jtvnw.net/emoticons/v1/3792/1.0
 https://static-cdn.jtvnw.net/emoticons/v1/22639/1.0
+https://static-cdn.jtvnw.net/emoticons/v1/106293/1.0
+https://static-cdn.jtvnw.net/emoticons/v1/106294/1.0
 https://static-cdn.jtvnw.net/emoticons/v1/90129/1.0
 https://static-cdn.jtvnw.net/emoticons/v1/49106/1.0
 https://static-cdn.jtvnw.net/emoticons/v1/46248/1.0
