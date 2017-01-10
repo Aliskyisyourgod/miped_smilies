@@ -78,14 +78,14 @@ var userTitles = {
 };
 
 /**
- * Тут заполнять автозамену смайлов
+ * Тут список автозамены смайлов
  */
 var smilies = {
     ':D': 'https://vk.com/images/emoji/D83DDE02.png',
-	':(': 'http://vk.com/images/emoji/D83DDE12.png',
-	':)': 'http://vk.com/images/emoji/263A.png',
+	':\\(': 'http://vk.com/images/emoji/D83DDE12.png',
+	':\\)': 'http://vk.com/images/emoji/263A.png',
 	':o': 'https://vk.com/images/emoji/D83DDE31.png',
-	':*': 'https://vk.com/images/emoji/D83DDE18.png',
+	':\\*': 'https://vk.com/images/emoji/D83DDE18.png',
 	'4Head': 'https://static-cdn.jtvnw.net/emoticons/v1/354/1.0',
 	'BabyRage': 'https://static-cdn.jtvnw.net/emoticons/v1/22639/1.0',
 	'FailFish': 'https://static-cdn.jtvnw.net/emoticons/v1/360/1.0',
@@ -102,7 +102,7 @@ var smilies = {
 	'KappaHD': 'https://static-cdn.jtvnw.net/jtv_user_pictures/emoticon-2867-src-f02f9d40f66f0840-28x28.png',
 	'ru': 'http://vk.com/images/emoji/D83CDDF7D83CDDFA.png',
 	'ua': 'http://vk.com/images/emoji/D83CDDFAD83CDDE6.png',
-	'bu': 'http://vk.com/images/emoji/D83CDDE7D83CDDFE.png',
+	'by': 'http://vk.com/images/emoji/D83CDDE7D83CDDFE.png',
 	'kz': 'http://vk.com/images/emoji/D83CDDF0D83CDDFF.png',
 	'спасибо': 'https://static-cdn.jtvnw.net/emoticons/v1/15020/1.0',
 	'duckFace': 'https://static-cdn.jtvnw.net/emoticons/v1/50017/1.0',
@@ -116,19 +116,7 @@ var smilies = {
 	'хм': 'https://static-cdn.jtvnw.net/emoticons/v1/40073/1.0',
 	'hype': 'https://static-cdn.jtvnw.net/emoticons/v1/50739/1.0',
 	'хайп': 'https://static-cdn.jtvnw.net/emoticons/v1/50739/1.0'
-},
-on('#QuickReply','mouseover','.button',function(){
-    content = bodyFrame.innerHTML;
-
-    for (var key in smilies) {
-        content = content.replace(
-            new RegExp(key,'ig'),
-            '<img src="'+smilies[key]+'" class="miped-smile">'
-        );
-    }
-
-    bodyFrame.innerHTML = content;
-});
+};
 
 /**
  * ----
@@ -187,7 +175,6 @@ setStorage('theme',isDarkTheme);
 log('Активирована «'+(isDarkTheme?'тёмная':'светлая')+'» тема');
 
 $('html').classList.add(isDarkTheme?'miped-theme-dark':'miped-theme-light');
-
 
 /**
  * ----
@@ -305,10 +292,12 @@ fetch(getURL('/assets/settings.html'),{
 	var isEnabledVk = putStorage('vk',true);
 	var isEnabledTwitch = putStorage('twitch',true);
 	var isEnabledAnimenu = putStorage('animenu',false);
+	var isEnabledAutoReplace = putStorage('autoreplace',true);
 
 	log('Emoji вконтакте «'+(isEnabledVk?'включены':'выключены')+'»');
 	log('Emoji твича «'+(isEnabledTwitch?'включены':'выключены')+'»');
 	log('Аниме меню «'+(isEnabledAnimenu?'включено':'выключено')+'»');
+	log('Автозамена слов «'+(isEnabledAutoReplace?'включена':'выключена')+'»');
 
 	$('#nt').src = getURL('/images/'+(isEnabledAnimenu?'animenu':'menu')+'.png');
 
@@ -321,6 +310,21 @@ fetch(getURL('/assets/settings.html'),{
 	on(smilePanel,'change','input',function(event){
 		setStorage(event.target.dataset.setting,event.target.checked);
 	});
+	
+	if (isEnabledAutoReplace) {
+		on('#QuickReply','mouseover','.button',function(){
+			content = bodyFrame.innerHTML;
+
+			for (var key in smilies) {
+				content = content.replace(
+					new RegExp(key,'ig'),
+					'<img src="'+smilies[key]+'" class="miped-smile">'
+				);
+			}
+
+			bodyFrame.innerHTML = content;
+		});
+	}
 });
 
 /**
