@@ -2,7 +2,7 @@
 	"name": "MipedSmiles",
 	"description": "Использование сторонних смайлов для сообщений и другие улучшения для miped.ru",
 	"permissions": [ "cookies", "*://miped.ru/*" ],
-	"version": "0.5.0.1",
+	"version": "0.5.0.2",
 	"manifest_version": 2,
 	"content_scripts": [{
 		"css": ["extension.css"],
