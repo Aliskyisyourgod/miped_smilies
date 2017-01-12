@@ -149,10 +149,6 @@ body {
     width: calc(100% - 66px);
     overflow: hidden;
 }
-.mainProfileColumn .block .massive {  /*  */
-	width: 1800px;
-	overflow: hidden;
-}
 .mainProfileColumn .mainText .username {
 	margin-top: 14px;
 }
@@ -239,6 +235,15 @@ body {
 
 #smile_panel td {
 	border: 0!important;
+}
+
+.miped-minusrep .xenOverlay .ctrlUnit li {
+	position: relative;
+	overflow: auto!important;
+	height: auto!important;
+	width: auto!important;
+	right: 0!important;
+	opacity: 1!important;
 }
 
 .xenOverlay .ctrlUnit li {
@@ -457,4 +462,28 @@ input.cmn-toggle-round-flat:checked + label:after {
 #ProfilePostList .comment .miped-member-avatar {
 	width: 38px;
     height: 38px;
+}
+
+/**
+ * Фон с аватарками подписчиков
+ */
+.primaryUserBlock .mainText {
+	position: relative;
+	z-index: 2;
+}
+
+/* Стили для блока background под .mainText */
+.miped-member-background {
+	position: relative;
+	width: 100%;
+	top: -174px;
+	z-index: 1;
+	overflow: hidden;
+}
+
+/* Стили для canvas */
+.miped-member-background-canvas {
+	display: block;
+	margin: 0 auto;
+	width: 100%;
 }

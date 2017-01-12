@@ -183,7 +183,7 @@ setStorage('theme',isDarkTheme);
 
 log('Активирована «'+(isDarkTheme?'тёмная':'светлая')+'» тема');
 
-$('html').classList.add(isDarkTheme?'miped-theme-dark':'miped-theme-light');
+$('html').classList.add('miped-theme-'+(isDarkTheme?'dark':'light'));
 
 /**
  * ----
@@ -321,21 +321,25 @@ fetch(getURL('/assets/settings.html'),{
 	on(smilePanel,'change','input',function(event){
 		setStorage(event.target.dataset.setting,event.target.checked);
 	});
-	
-	if (isEnabledMinusRep) { // не забыть убрать, и сделать через класс
-		var styleRep = document.createElement('style');
-		styleRep.type = 'text/css';
-		styleRep.innerHTML = '.xenOverlay .ctrlUnit li {'
-				+ 'position: relative; overflow: auto!important;'
-				+ 'height: auto!important; width: auto!important;'
-				+ 'right: 0!important; opacity: 1!important; }';
-		document.head.appendChild(styleRep);
+
+	if (isEnabledMinusRep) {
+		$('html').classList.add('miped-minusrep');
 	}
-	
-	var bodyFrame = window.frames[0].document.body;
-	
+
+	var bodyFrame = null;
+
+	if (0 in window.frames) {
+		try {
+			bodyFrame = window.frames[0].document.body;
+		} catch (e) {}
+	}
+
 	if (isEnabledAutoReplace) {
 		on('#QuickReply','mouseover','.button',function(){
+			if (bodyFrame === null) {
+				return;
+			}
+
 			content = bodyFrame.innerHTML;
 
 			for (var key in smilies) {
@@ -481,108 +485,28 @@ if (controller === 'member') {
 	$$('.messageSimple img', content).forEach(function(avatar){
 		avatar.src = avatar.src.replace(/\/s\//i,'/l/');
 	});
-	
-	var tItem = $('input[name=_xfToken]'),
-		token = tItem.defaultValue,
-		action = tItem.formAction,
-		imagesAvatars = [];
-		
-	if ($('.followBlocks')) {
-		fetch( action+"followers?&_xfRequestUri="+action+"&_xfNoRedirect=1&_xfToken="+token+"&_xfResponseType=json", { credentials: 'include' })
-		.then( function(response) { return response.text() })
-		.then( function(body) {
-			var newBody = JSON.parse(body);
-			if (!newBody.error) {
-				var el = parseHTML(newBody.templateHtml);
-				$$('span.img', el).forEach( function(a) {
-					var element = a.style.backgroundImage.split('"')[1].replace(/\/s\//i,'/l/');
-					imagesAvatars.push(element);
-				});
-			} else {
-				log('Ошибка: '+newBody.error);
-			}
-			
-			var imagesCount = imagesAvatars.length - 1, imagesWidth = imagesCount * 100,
-				canvasAvatars = [], ctx = [], cCount = 0;
-			
-			do {
-				canvasAvatars.push(document.createElement('canvas'));
-				/* Получить два мира 2D няшек куда лучше одного */
-				var canvas = canvasAvatars[cCount];
-				ctx.push(canvas.getContext('2d'));
-				canvas.width = imagesWidth;
-				canvas.height = 176;
-				cCount++;
-				log(cCount * imagesWidth);
-			} while ((cCount * imagesWidth) <= 1800);
-			 
-			/* Загружаем все изображения */
-			Promise.all(imagesAvatars.map(function(image){
-				return new Promise(function(resolve,reject){
-					var img = new Image;
-			 
-					img.src = image;
-			 
-					img.onload = function(){
-						resolve(img);
-					};
-					img.onerror = reject;
-				});
-			}))
-			.then(function(images) {
-				return images.forEach(function(image,i){
-					var offset = i*100;
-					
-					log('4');
-					
-					ctx.forEach( function(a) {
-						a.drawImage(image,offset,0,176,176);
-					});
-				});
-			})
-			.then(function(){
-				var mainText = $('.mainText'),
-					qq = $('.section.primaryUserBlock'),
-					ww = $('.mainTabs', qq),
-					containForContain = document.createElement('div'),
-					containForCanvas = document.createElement('div');
-					
-				containForContain.className = 'block';
-				containForCanvas.className = 'massive';
-				
-				qq.insertBefore(containForContain, ww);
-				containForContain.appendChild(containForCanvas);
-				canvasAvatars.forEach( function(a) {
-					containForCanvas.appendChild(a);
-				});
-			 
-				// var dataURL = canvasAvatars.toDataURL();
-				// mainText.style.background = 'url('+dataURL+')';
-			 
-				console.log('Скрипт закончил работу');
-			})
-			.catch(console.error);
-		});
-	} else {
-		log('У пользователя нет подписчиков');
-	}
-	
+
 	/**
 	 * TODO: Добавить аватарку в профиль
 	 * На данный момент без CSS
 	 */
-	 
+
 	var list = $('#ProfilePostList');
-	$$('.avatar', list).forEach( function(a) {
-		var src = $('img', a).src;
+	$$('.avatar', list).forEach(function(post){
+		var img = $('img',post);
+
+		if (img === null) {
+			return;
+		}
+
 		var avatar = createElement('div', {
 			class: 'miped-member-avatar',
-			style: 'background: url('+src+') center center; background-size: cover;'
+			style: 'background: url('+img.src+') center center; background-size: cover;'
 		});
-		a.appendChild(avatar);
+		post.appendChild(avatar);
 	});
-	
-	/* 
+
+	/*
 
 	var avatar = createElement('img',{
 		class: 'miped-member-avatar',
@@ -594,6 +518,115 @@ if (controller === 'member') {
 	title.parentNode.insertBefore(avatar,title.nextSibling);
 
 	*/
+
+	Promise.resolve()
+	.then(function(){
+		if ($('.followBlocks',content) === null) {
+			log('Отсутсвуют подписчики у пользователя!');
+
+			throw new Error('У пользователя нет подписчиков');
+		}
+
+		var xenforoToken = $('input[name=_xfToken]');
+
+		var urlFollowers = xenforoToken.formAction+'followers?';
+		urlFollowers += stringifyQueryString({
+			_xfRequestUri: xenforoToken.formAction,
+			_xfToken: xenforoToken.defaultValue,
+			_xfResponseType: 'json',
+			_xfNoRedirect: 1
+		});
+
+		return fetch(urlFollowers,{
+			credentials: 'include'
+		});
+	})
+	.then(function(response){
+		return response.json();
+	})
+	.then(function(response){
+		if ('error' in response) {
+			console.log(response.error);
+
+			throw new Error('Ответ сервера был с ошибкой!');
+		}
+
+		return parseHTML(response.templateHtml);
+	})
+	.then(function(body){
+		var images = $$('span.img',body);
+
+		if (images === null || images.length === 0) {
+			throw new Error('Не удалось обнаружить подписчиков!');
+		}
+
+		/* Зачем грузить лишнее, правда? */
+		return images.splice(0,22).map(function(image){
+			return new Promise(function(resolve,reject){
+				var src = image.style.backgroundImage.split('"')[1];
+				src = src.replace(/\/s\//i,'/l/');
+
+				var img = new Image;
+
+				img.src = src;
+
+				img.onload = function(){
+					resolve(img);
+				};
+				img.onerror = reject;
+			});
+		});
+	})
+	.then(function(images){
+		return Promise.all(images);
+	})
+	.then(function(images){
+		/* Повторения значений до полного заполнения */
+		if (images.length !== 22) {
+			var imagesRepeat = [];
+
+			while (imagesRepeat.length <= 23) {
+				Array.prototype.push.apply(
+					imagesRepeat,
+					images
+				)
+			}
+
+			images = imagesRepeat.splice(0,22);
+		}
+
+		var canvas = createElement('canvas',{
+			class: 'miped-member-background-canvas',
+			width: 1100,
+			height: 200
+		});
+		var ctx = canvas.getContext('2d');
+
+		var x = 0, y = 0;
+
+		images.forEach(function(image){
+			ctx.drawImage(image,x,y,100,100);
+
+			x += 100;
+
+			if (canvas.width <= x) {
+				x = 0;
+				y = 100;
+			}
+		});
+
+		var primaryUserBlock = $('.primaryUserBlock',content);
+		var mainText = $('.mainText',primaryUserBlock);
+
+		var background = createElement('div',{
+			class: 'miped-member-background'
+		});
+
+		background.appendChild(canvas);
+
+		primaryUserBlock.insertBefore(background,mainText.nextSibling);
+	})
+	.catch(console.error);
 }
 
 /**
@@ -833,4 +866,23 @@ function createElement (name,options) {
 	}
 
 	return element;
+}
+
+/**
+ * Генерирует строку запроса
+ *
+ * @param object params
+ *
+ * @return string
+ */
+function stringifyQueryString (params) {
+	params = params || {};
+
+	var qs = [];
+
+	for (var key in params) {
+		qs.push(encodeURIComponent(key)+'='+encodeURIComponent(params[key]));
+	}
+
+	return qs.join('&');
 }
