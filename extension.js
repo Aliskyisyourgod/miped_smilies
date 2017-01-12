@@ -3,8 +3,7 @@
 /**
  * @var Системные, на них завязан некоторый функционал
  */
-var queryIsSimple = /^(#?[\w-]+|\.[\w-.]+)$/, eventsList = [], storageCache = _getStorage(), 
-	bodyFrame, content;
+var queryIsSimple = /^(#?[\w-]+|\.[\w-.]+)$/, eventsList = [], storageCache = _getStorage(), content;
 
 /* Очистка консоли от мусора */
 console.clear();
@@ -186,12 +185,6 @@ log('Активирована «'+(isDarkTheme?'тёмная':'светлая')+
 
 $('html').classList.add(isDarkTheme?'miped-theme-dark':'miped-theme-light');
 
-if (window.frames[0]) {
-	bodyFrame = window.frames[0].document.body;
-} else {
-	bodyFrame = null;
-}
-
 /**
  * ----
  *
@@ -329,7 +322,7 @@ fetch(getURL('/assets/settings.html'),{
 		setStorage(event.target.dataset.setting,event.target.checked);
 	});
 	
-	if (isEnabledMinusRep) {
+	if (isEnabledMinusRep) { // не забыть убрать, и сделать через класс
 		var styleRep = document.createElement('style');
 		styleRep.type = 'text/css';
 		styleRep.innerHTML = '.xenOverlay .ctrlUnit li {'
@@ -339,13 +332,15 @@ fetch(getURL('/assets/settings.html'),{
 		document.head.appendChild(styleRep);
 	}
 	
+	var bodyFrame = window.frames[0].document.body;
+	
 	if (isEnabledAutoReplace) {
 		on('#QuickReply','mouseover','.button',function(){
 			content = bodyFrame.innerHTML;
 
 			for (var key in smilies) {
 				content = content.replace(
-					new RegExp(key,'ig'),
+					new RegExp(' '+key,'ig'),
 					'<img src="'+smilies[key]+'" class="miped-smile">'
 				);
 			}
@@ -483,80 +478,111 @@ if (controller === 'member') {
 
 	content.classList.add('miped-member');
 
-	$$('.messageSimple img',content).forEach(function(avatar){
+	$$('.messageSimple img', content).forEach(function(avatar){
 		avatar.src = avatar.src.replace(/\/s\//i,'/l/');
-	})
-
-	var imagesAvatars = [];
-	$$('.avatarHeap span').forEach( function(a) {
-		var item = a.style.backgroundImage.split('"')[1]
-		imagesAvatars.push(item);
 	});
 	
-	var imagesCount = imagesAvatars.length, imagesWidth = imagesCount * 100,
-		canvasAvatars = [], ctx = [], cCount = 0;
-	
-	do {
-		canvasAvatars.push(document.createElement('canvas'));
-		/* Получить два мира 2D няшек куда лучше одного */
-		var canvas = canvasAvatars[cCount];
-		ctx.push(canvas.getContext('2d'));
-		canvas.width = imagesWidth;
-		canvas.height = 176;
-		cCount++;
-	} while (cCount * imagesWidth <= 1800);
-	 
-	/* Загружаем все изображения */
-	Promise.all(imagesAvatars.map(function(image){
-		return new Promise(function(resolve,reject){
-			var img = new Image;
-	 
-			img.src = image;
-	 
-			img.onload = function(){
-				resolve(img);
-			};
-			img.onerror = reject;
-		});
-	}))
-	.then(function(images) {
-		return images.forEach(function(image,i){
-			var offset = i*100;
-			
-			ctx.forEach( function(a) {
-				a.drawImage(image,offset,0,176,176);
-			});
-		});
-	})
-	.then(function(){
-		var mainText = document.querySelector('.mainText'),
-			qq = $('.section.primaryUserBlock'),
-			ww = $('.mainTabs'),
-			containForContain = document.createElement('div'),
-			containForCanvas = document.createElement('div');
-			
-		containForContain.className = 'block';
-		containForCanvas.className = 'massive';
+	var tItem = $('input[name=_xfToken]'),
+		token = tItem.defaultValue,
+		action = tItem.formAction,
+		imagesAvatars = [];
 		
-		qq.insertBefore(containForContain, ww);
-		containForContain.appendChild(containForCanvas);
-		canvasAvatars.forEach( function(a) {
-			containForCanvas.appendChild(a);
+	if ($('.followBlocks')) {
+		fetch( action+"followers?&_xfRequestUri="+action+"&_xfNoRedirect=1&_xfToken="+token+"&_xfResponseType=json", { credentials: 'include' })
+		.then( function(response) { return response.text() })
+		.then( function(body) {
+			var newBody = JSON.parse(body);
+			if (!newBody.error) {
+				var el = parseHTML(newBody.templateHtml);
+				$$('span.img', el).forEach( function(a) {
+					var element = a.style.backgroundImage.split('"')[1].replace(/\/s\//i,'/l/');
+					imagesAvatars.push(element);
+				});
+			} else {
+				log('Ошибка: '+newBody.error);
+			}
+			
+			var imagesCount = imagesAvatars.length - 1, imagesWidth = imagesCount * 100,
+				canvasAvatars = [], ctx = [], cCount = 0;
+			
+			do {
+				canvasAvatars.push(document.createElement('canvas'));
+				/* Получить два мира 2D няшек куда лучше одного */
+				var canvas = canvasAvatars[cCount];
+				ctx.push(canvas.getContext('2d'));
+				canvas.width = imagesWidth;
+				canvas.height = 176;
+				cCount++;
+				log(cCount * imagesWidth);
+			} while ((cCount * imagesWidth) <= 1800);
+			 
+			/* Загружаем все изображения */
+			Promise.all(imagesAvatars.map(function(image){
+				return new Promise(function(resolve,reject){
+					var img = new Image;
+			 
+					img.src = image;
+			 
+					img.onload = function(){
+						resolve(img);
+					};
+					img.onerror = reject;
+				});
+			}))
+			.then(function(images) {
+				return images.forEach(function(image,i){
+					var offset = i*100;
+					
+					log('4');
+					
+					ctx.forEach( function(a) {
+						a.drawImage(image,offset,0,176,176);
+					});
+				});
+			})
+			.then(function(){
+				var mainText = $('.mainText'),
+					qq = $('.section.primaryUserBlock'),
+					ww = $('.mainTabs', qq),
+					containForContain = document.createElement('div'),
+					containForCanvas = document.createElement('div');
+					
+				containForContain.className = 'block';
+				containForCanvas.className = 'massive';
+				
+				qq.insertBefore(containForContain, ww);
+				containForContain.appendChild(containForCanvas);
+				canvasAvatars.forEach( function(a) {
+					containForCanvas.appendChild(a);
+				});
+			 
+				// var dataURL = canvasAvatars.toDataURL();
+				// mainText.style.background = 'url('+dataURL+')';
+			 
+				console.log('Скрипт закончил работу');
+			})
+			.catch(console.error);
 		});
-	 
-		// var dataURL = canvasAvatars.toDataURL();
-		// mainText.style.background = 'url('+dataURL+')';
-	 
-		console.log('Скрипт закончил работу');
-	})
-	.catch(console.error);
+	} else {
+		log('У пользователя нет подписчиков');
+	}
 	
 	/**
 	 * TODO: Добавить аватарку в профиль
 	 * На данный момент без CSS
 	 */
-
-	/*
+	 
+	var list = $('#ProfilePostList');
+	$$('.avatar', list).forEach( function(a) {
+		var src = $('img', a).src;
+		var avatar = createElement('div', {
+			class: 'miped-member-avatar',
+			style: 'background: url('+src+') center center; background-size: cover;'
+		});
+		a.appendChild(avatar);
+	});
+	
+	/* 
 
 	var avatar = createElement('img',{
 		class: 'miped-member-avatar',

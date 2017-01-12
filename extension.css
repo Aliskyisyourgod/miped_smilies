@@ -424,6 +424,13 @@ input.cmn-toggle-round-flat:checked + label:after {
 	margin-left: 0!important;
 }
 
+.miped-member-avatar {
+	 width: 100px;
+	 height: 100px;
+	 background-size: cover;
+	 border-radius: 90px;
+}
+
 @media only screen and (min-width: 820px) {
 	.miped-member .secondaryContent {
 		margin: 0 auto!important;
@@ -441,4 +448,13 @@ input.cmn-toggle-round-flat:checked + label:after {
 	.miped-member .mainProfileColumn {
 		width: 100%;
 	}
+}
+
+#ProfilePostList img {
+    position: absolute;
+    opacity: 0;
+}
+#ProfilePostList .comment .miped-member-avatar {
+	width: 38px;
+    height: 38px;
 }
