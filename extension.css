@@ -476,7 +476,7 @@ input.cmn-toggle-round-flat:checked + label:after {
 .miped-member-background {
 	position: relative;
 	width: 100%;
-	top: -174px;
+	margin-top: -174px;
 	z-index: 1;
 	overflow: hidden;
 }
@@ -486,4 +486,5 @@ input.cmn-toggle-round-flat:checked + label:after {
 	display: block;
 	margin: 0 auto;
 	width: 100%;
+	opacity: 0;
 }

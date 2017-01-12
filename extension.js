@@ -345,7 +345,7 @@ fetch(getURL('/assets/settings.html'),{
 			for (var key in smilies) {
 				content = content.replace(
 					new RegExp(' '+key,'ig'),
-					'<img src="'+smilies[key]+'" class="miped-smile">'
+					' <img src="'+smilies[key]+'" class="miped-smile">'
 				);
 			}
 
@@ -625,6 +625,36 @@ if (controller === 'member') {
 		background.appendChild(canvas);
 
 		primaryUserBlock.insertBefore(background,mainText.nextSibling);
+		
+		var dd = $('.miped-member-background'),
+			div = $('.miped-member-background'),
+			elem = $('.mainText');
+		log(parseInt(getComputedStyle(dd).height, 10));
+		
+		// пока посмотрим, если начнутся лаги - верну
+		function resize() {
+			var cvHeight = parseInt(getComputedStyle(div).height, 10);
+			var elHeight = parseInt(getComputedStyle(elem).height, 10);
+	 
+			var result = (cvHeight - elHeight + 1) / 2;
+			elem.style.paddingTop = result+'px';
+			elem.style.paddingBottom = result+'px';
+	 
+			div.style.marginTop = '-'+(elHeight + result * 2)+'px';
+		}
+		window.addEventListener('resize', resize);
+		
+		setTimeout(function(){
+			var cvHeight = parseInt(getComputedStyle(div).height, 10);
+			var elHeight = parseInt(getComputedStyle(elem).height, 10);
+	 
+			var result = (cvHeight - elHeight + 1) / 2;
+			elem.style.paddingTop = result+'px';
+			elem.style.paddingBottom = result+'px';
+	 
+			div.style.marginTop = '-'+(elHeight + result * 2)+'px';
+			var canvas = $('canvas', div).style.opacity = '1';
+		},1000);
 	})
 	.catch(console.error);
 }
@@ -708,7 +738,7 @@ function on (element,name,selector,handler) {
 		handler: handler,
 		selector: selector
 	});
-
+	
 	element.addEventListener(name,function(event){
 		var target = event.target;
 		var current = event.currentTarget;
