@@ -74,6 +74,16 @@ var userTitles = {
 		background: {
 			name: 'huyach19.png'
 		}
+	},
+	'flind.exe': {
+		background: {
+			name: 'flind_exe.gif'
+		}
+	},
+	'Mgman': {
+		background: {
+			name: 'mgman.png'
+		}
 	}
 };
 
@@ -96,14 +106,14 @@ var smilies = {
 	'deIlluminati': 'https://static-cdn.jtvnw.net/emoticons/v1/46248/1.0',
 	'KappaClaus': 'https://static-cdn.jtvnw.net/emoticons/v1/74510/1.0',
 	'KappaPride': 'https://static-cdn.jtvnw.net/emoticons/v1/55338/1.0',
+	'KappaHD': 'https://static-cdn.jtvnw.net/jtv_user_pictures/emoticon-2867-src-f02f9d40f66f0840-28x28.png',
     'kappa': 'https://static-cdn.jtvnw.net/emoticons/v1/25/1.0',
 	'WutFace': 'https://static-cdn.jtvnw.net/emoticons/v1/28087/1.0',
 	'ANELE': 'https://static-cdn.jtvnw.net/emoticons/v1/3792/1.0',
-	'KappaHD': 'https://static-cdn.jtvnw.net/jtv_user_pictures/emoticon-2867-src-f02f9d40f66f0840-28x28.png',
-	'ru': 'http://vk.com/images/emoji/D83CDDF7D83CDDFA.png',
-	'ua': 'http://vk.com/images/emoji/D83CDDFAD83CDDE6.png',
-	'by': 'http://vk.com/images/emoji/D83CDDE7D83CDDFE.png',
-	'kz': 'http://vk.com/images/emoji/D83CDDF0D83CDDFF.png',
+	'::ru': 'http://vk.com/images/emoji/D83CDDF7D83CDDFA.png',
+	'::ua': 'http://vk.com/images/emoji/D83CDDFAD83CDDE6.png',
+	'::by': 'http://vk.com/images/emoji/D83CDDE7D83CDDFE.png',
+	'::kz': 'http://vk.com/images/emoji/D83CDDF0D83CDDFF.png',
 	'спасибо': 'https://static-cdn.jtvnw.net/emoticons/v1/15020/1.0',
 	'duckFace': 'https://static-cdn.jtvnw.net/emoticons/v1/50017/1.0',
 	'butthurt': 'https://static-cdn.jtvnw.net/emoticons/v1/85693/1.0',
@@ -176,7 +186,7 @@ log('Активирована «'+(isDarkTheme?'тёмная':'светлая')+
 
 $('html').classList.add(isDarkTheme?'miped-theme-dark':'miped-theme-light');
 
-if (window.frames[0].document.body) {
+if (window.frames[0]) {
 	bodyFrame = window.frames[0].document.body;
 } else {
 	bodyFrame = null;
@@ -299,11 +309,13 @@ fetch(getURL('/assets/settings.html'),{
 	var isEnabledTwitch = putStorage('twitch',true);
 	var isEnabledAnimenu = putStorage('animenu',false);
 	var isEnabledAutoReplace = putStorage('autoreplace',true);
+	var isEnabledMinusRep = putStorage('minusrep',false);
 
 	log('Emoji вконтакте «'+(isEnabledVk?'включены':'выключены')+'»');
 	log('Emoji твича «'+(isEnabledTwitch?'включены':'выключены')+'»');
 	log('Аниме меню «'+(isEnabledAnimenu?'включено':'выключено')+'»');
 	log('Автозамена слов «'+(isEnabledAutoReplace?'включена':'выключена')+'»');
+	log('Изменение репутации «'+(isEnabledMinusRep?'включено':'выключено')+'»');
 
 	$('#nt').src = getURL('/images/'+(isEnabledAnimenu?'animenu':'menu')+'.png');
 
@@ -316,6 +328,16 @@ fetch(getURL('/assets/settings.html'),{
 	on(smilePanel,'change','input',function(event){
 		setStorage(event.target.dataset.setting,event.target.checked);
 	});
+	
+	if (isEnabledMinusRep) {
+		var styleRep = document.createElement('style');
+		styleRep.type = 'text/css';
+		styleRep.innerHTML = '.xenOverlay .ctrlUnit li {'
+				+ 'position: relative; overflow: auto!important;'
+				+ 'height: auto!important; width: auto!important;'
+				+ 'right: 0!important; opacity: 1!important; }';
+		document.head.appendChild(styleRep);
+	}
 	
 	if (isEnabledAutoReplace) {
 		on('#QuickReply','mouseover','.button',function(){
@@ -465,6 +487,70 @@ if (controller === 'member') {
 		avatar.src = avatar.src.replace(/\/s\//i,'/l/');
 	})
 
+	var imagesAvatars = [];
+	$$('.avatarHeap span').forEach( function(a) {
+		var item = a.style.backgroundImage.split('"')[1]
+		imagesAvatars.push(item);
+	});
+	
+	var imagesCount = imagesAvatars.length, imagesWidth = imagesCount * 100,
+		canvasAvatars = [], ctx = [], cCount = 0;
+	
+	do {
+		canvasAvatars.push(document.createElement('canvas'));
+		/* Получить два мира 2D няшек куда лучше одного */
+		var canvas = canvasAvatars[cCount];
+		ctx.push(canvas.getContext('2d'));
+		canvas.width = imagesWidth;
+		canvas.height = 176;
+		cCount++;
+	} while (cCount * imagesWidth <= 1800);
+	 
+	/* Загружаем все изображения */
+	Promise.all(imagesAvatars.map(function(image){
+		return new Promise(function(resolve,reject){
+			var img = new Image;
+	 
+			img.src = image;
+	 
+			img.onload = function(){
+				resolve(img);
+			};
+			img.onerror = reject;
+		});
+	}))
+	.then(function(images) {
+		return images.forEach(function(image,i){
+			var offset = i*100;
+			
+			ctx.forEach( function(a) {
+				a.drawImage(image,offset,0,176,176);
+			});
+		});
+	})
+	.then(function(){
+		var mainText = document.querySelector('.mainText'),
+			qq = $('.section.primaryUserBlock'),
+			ww = $('.mainTabs'),
+			containForContain = document.createElement('div'),
+			containForCanvas = document.createElement('div');
+			
+		containForContain.className = 'block';
+		containForCanvas.className = 'massive';
+		
+		qq.insertBefore(containForContain, ww);
+		containForContain.appendChild(containForCanvas);
+		canvasAvatars.forEach( function(a) {
+			containForCanvas.appendChild(a);
+		});
+	 
+		// var dataURL = canvasAvatars.toDataURL();
+		// mainText.style.background = 'url('+dataURL+')';
+	 
+		console.log('Скрипт закончил работу');
+	})
+	.catch(console.error);
+	
 	/**
 	 * TODO: Добавить аватарку в профиль
 	 * На данный момент без CSS

@@ -135,13 +135,24 @@ body {
     margin-left: 10px;
     margin-top: 4px;
 }
-.mainProfileColumn .mainText {
+.mainProfileColumn .mainText {  /*  */
 	text-align: center;
+    position: relative;
+    height: 120px;
+    z-index: 1;
+    background: rgba(0,0,0,.9);
 }
-/*.mainProfileColumn .mainText {
-	text-align: center;
-	width: 775px;
-}*/
+.mainProfileColumn .block {  /*  */
+    position: absolute;
+    margin-top: -175px;
+	height: 175px;
+    width: calc(100% - 66px);
+    overflow: hidden;
+}
+.mainProfileColumn .block .massive {  /*  */
+	width: 1800px;
+	overflow: hidden;
+}
 .mainProfileColumn .mainText .username {
 	margin-top: 14px;
 }
