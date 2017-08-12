@@ -20,42 +20,6 @@ var resultClearTrash = clearTrash (massiveClear, 1);
 
 log ('Результат очистки: '+resultClearTrash);
 
-if (location.href == 'http://miped.ru/f/usersmilies') {
-	document.title = 'Добавление собственных смайлов';
-	
-	fetch(getURL('/assets/createSmilies.html'))
-	.then(function(response){
-		return response.text();
-	})
-	.then(function(body){
-		document.body.innerHTML = body;
-
-		var uSmi = getStorage('userSmiles', true);
-		var putHTML = '';
-
-		uSmi.forEach( function (a, k) {
-			putHTML += '<div class="boss"><img src="'+a+'" class="i'+k+'" style="width: 26px; height: 26px;"><input value="'+a+'" onchange="document.querySelector(\'.i'+k+'\').src = this.value;"><span onclick="del('+k+');">X</span></div>';
-		});
-
-		$('#containerLink').innerHTML = putHTML;
-	});
-}
-
-var script = document.createElement('script');
-
-script.innerHTML = "function copySmiles() { var element = ''; get_storage('userSmiles', true).forEach(function (a) { element += '\\n'+a;"
-	+ "}); } function del(id) { document.querySelectorAll('#containerLink div')[id].outerHTML = ''; }"
-	+ "function addLink() { var alls = document.createElement('div'), call = document.querySelector('#containerLink div').length; alls.innerHTML = \"<div class='boss'><img src='' class='i\"+call+\"' style='width: 26px; height: 26px;'><input value='' onchange='document.querySelector(\'.i\"+call+\"\').src = this.value;'><span onclick='del(\"+call+\");'>X</span></div>\";"
-	+ "document.querySelector('#containerLink').appendChild(alls); } function saveSmilies(){ var massive = [], i, j = 0;"
-	+ "document.querySelectorAll('#containerLink input').forEach(function(a) { j++; massive[j-1] = a.value; i += '<img src=\"'+a.value+'\">' }); i += '<br>Вы вернётесь назад через 3 секунды'; setStorage('userSmiles', massive);"
-	+ "var div = document.createElement('div'); div.innerHTML = i; document.querySelector('#allSmiles').appendChild(div);"
-	+ "setTimeout(function(){location.href='http://miped.ru/f/';}, 3000);} function getStorage (key,value) { if (hasStorage(key)) {"
-	+ "return storageCache[key]; } return value !== undefined?value:null;} function setStorage (key,value) { storageCache = _getStorage();"
-	+ "storageCache[key] = value; localStorage.setItem('MipedSmiles',"
-	+ "JSON.stringify(storageCache)); return storageCache[key]; } function _getStorage () { var storage = localStorage.getItem('MipedSmiles');"
-	+ "if (storage === null) { storage = {}; } else { storage = JSON.parse(storage); } return storage; }";
-document.head.appendChild(script);
-
 /* Ну расширение почти загружено */
 document.body.style.opacity = 1;
 
@@ -335,6 +299,39 @@ fetch(getURL('/assets/settings.html'),{
 		} else {
 			setStorage(e_name, event.target.checked);
 		}
+	});
+	
+	on(smilePanel,'click','#oSmiles',function(){
+		fetch(chrome.extension.getURL('/assets/createSmilies.html'))
+		.then(function(response){
+			return response.text();
+		})
+		.then(function(body){
+			var smileDiv = document.createElement('div');
+			smileDiv.className = 'smilediv';
+			smileDiv.innerHTML = body;
+			
+			document.body.insertBefore(smileDiv, document.body.firstChild);
+
+			var putHTML = '';
+
+			getStorage('userSmiles', true).forEach( function (a, k) {
+				putHTML += '<div class="boss i'+k+'"><img src="'+a+'" class="i'+k+' ms_image" style="width: 26px; height: 26px;"><input value="'+a+'" onchange="document.querySelector(\'.i'+k+'\').src = this.value;"><span onclick="del('+k+');" class="listButton" style="font-size: 12px;">D</span></div>';
+			});
+
+			$('#containerLink').innerHTML = putHTML;
+			
+			fetch(getURL('/assets/createSmilies.js'))
+			.then(function(response){
+				return response.text();
+			})
+			.then(function(body){
+				var script = document.createElement('script');
+				script.innerHTML = body;
+				
+				document.head.appendChild(script);
+			});
+		});
 	});
 
 	if (isEnabledMinusRep) {

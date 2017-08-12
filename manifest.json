@@ -13,6 +13,6 @@
    "manifest_version": 2,
    "name": "MipedSmiles",
    "permissions": [ "cookies", "*://miped.ru/*" ],
-   "version": "0.5.0.7",
-   "web_accessible_resources": [ "/assets/*.html", "/images/banner/*.png", "/images/banner/*.gif", "/images/banner/*.jpg", "/assets/smiles.txt", "/images/*.png", "/images/*.gif", "/images/*.jpg" ]
+   "version": "0.5.1.0",
+   "web_accessible_resources": [ "/assets/*.html", "/assets/*.js", "/images/banner/*.png", "/images/banner/*.gif", "/images/banner/*.jpg", "/assets/smiles.txt", "/images/*.png", "/images/*.gif", "/images/*.jpg" ]
 }
