@@ -28,6 +28,18 @@
 						<b>TWITCH</b>.tv
 					</td>
 				</tr>
+				<tr>
+					<td>
+						<div class="switch">
+							<input id="switch-miped-smilies" class="cmn-toggle cmn-toggle-round-flat" type="checkbox" data-setting="usersmile">
+							<label for="switch-miped-smilies"><br/>
+						  </label>
+						</div>
+					</td>
+					<td>
+						<b>Собственные</b> смайлы <span class="listButton" onclick="location.href = 'http://miped.ru/f/usersmilies';">Список</span>
+					</td>
+				</tr>
 			</table>
 			<br/><br><b>Доступные ф-ии:</b><br/>
 			<table class="stuff">
@@ -68,6 +80,61 @@
 					</td>
 				</tr>
 			</table>
-			<div id="status"></div>
+			<br/><br><b>Плавающий Юзербар</b><br/>
+			<table>
+				<tr>
+					<td style="width: 10px;">
+						Слева
+					</td>
+					<td style="padding: 1px 10px;">
+						<div class="switch">
+							<input id="switch-miped-userbar_left_right" class="cmn-toggle cmn-toggle-round-flat" type="checkbox" data-setting="userbarright">
+							<label for="switch-miped-userbar_left_right"><br/>
+						  </label>
+						</div>
+					</td>
+					<td>
+						cправа
+					</td>
+					<td>
+						<div class="switch">
+							<input id="switch-miped-userbar_left_right_px" class="cmn-miped-input" data-setting="userbarright_px">
+							<label for="switch-miped-userbar_left_right_px"><br/>
+						  </label>
+						</div>
+					</td>
+					<td>
+						<b>px</b>
+					</td>
+				</tr>
+				<tr>
+					<td style="width: 10px;">
+						Сверху
+					</td>
+					<td style="padding: 1px 10px;">
+						<div class="switch">
+							<input id="switch-miped-userbar_top_bottom" class="cmn-toggle cmn-toggle-round-flat" type="checkbox" data-setting="userbarbottom">
+							<label for="switch-miped-userbar_top_bottom"><br/>
+						  </label>
+						</div>
+					</td>
+					<td>
+						cнизу
+					</td>
+					<td>
+						<div class="switch">
+							<input id="switch-miped-userbar_left_right_px" class="cmn-miped-input" data-setting="userbarbottom_px">
+							<label for="switch-miped-userbar_left_right_px"><br/>
+						  </label>
+						</div>
+					</td>
+					<td>
+						<b>px</b>
+					</td>
+					</td>
+				</tr>
+			</table>
+			<br/><br/>
+			<div id="status" class="refreshButton" onclick="location.reload();">Обновить?</div>
 	</form>
 </div>

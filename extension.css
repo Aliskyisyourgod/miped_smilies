@@ -12,9 +12,9 @@ body {
 	line-height: 32px;
 }
 
-.miped-avatar-online {
+/*.miped-avatar-online {
 	box-shadow: 0 0 13px 1px rgba(63, 141, 98, 1);
-}
+}*/
 
 .miped-titles-extend {
 	height: 16px;
@@ -41,9 +41,9 @@ body {
 	background-color: #6BA65E;
 	color: #3C5B35!important;
 	font-size: 18px!important;
-	width: 310px;
+	width: 450px;
 	height: auto;
-  	right: -350px;
+  	right: -490px;
 	z-index: 1000;
 	padding: 20px;
   	-webkit-transition-duration: .3s;
@@ -55,33 +55,11 @@ body {
 	border-radius: 5px 0 0 5px;
 }
 #smile:hover {
-	right: 350px;
+	right: 490px;
 	opacity: 1;
 }
-.steamprofile {
-	transition-property: all;
-	transition-duration: .6s;
-	max-height: 0;
-    overflow: hidden;
-}
-.gamerProfilesContainer {
-	transition-property: all;
-	transition-duration: .6s;
-	max-height: 0;
-    overflow: hidden;
-}
-.messageUserInfo:hover .gamerProfilesContainer {
-	transition-property: all;
-	transition-duration: .6s;
-	max-height: 600px;
-}
-.messageUserInfo:hover .steamprofile {
-	transition-property: all;
-	transition-duration: .6s;
-	max-height: 600px;
-}
 .messageUserInfo {
-	width: 155px!important;
+	width: 170px!important;
 }
 .messageUserBlock .pairsJustified dt, .pairsInline dt {
 	font-size: 10px!important;
@@ -393,11 +371,12 @@ input.cmn-toggle-round-flat:checked + label:after {
 
 .messageUserInfo .uix_avatarHolderInner {
 	margin: 0!important;
-	width: 153px;
 }
 
 .messageUserInfo .avatar {
-	width: 153px;
+	position: relative;
+	left: -1px;
+	width: 170px;
 }
 
 /* Фиксы на CSS */
@@ -487,4 +466,178 @@ input.cmn-toggle-round-flat:checked + label:after {
 	margin: 0 auto;
 	width: 100%;
 	opacity: 0;
+}
+
+
+
+/**
+ * Новый дизайн сообщений форума
+ */
+.uix_message {
+	font-family: sans-serif;
+}
+.uix_message .extraUserInfo dt {
+	font-size: 12px!important;
+}
+.uix_message .extraUserInfo dd {
+	font-size: 12px!important;
+}
+.quickReply .messageUserBlock {
+	width: 140px;
+}
+.quickReply .messageUserInfo {
+	width: 140px!important;
+}
+.quickReply .username {
+	width: 140px;
+}
+.uix_message .userBanner {
+	margin-left: -5px!important;
+    margin-right: -5px!important;
+	border: none!important;
+	border-radius: 0px!important;
+}
+.uix_message .gamerProfilesContainer {
+	text-align: center!important;
+	padding-bottom: 2px!important;
+}
+.uix_message .avatar img {
+	border: 0px!important;
+    border-radius: 0px!important;
+}
+ 
+	/* Светлый дизайн */
+	.ms_whiteDesign .userText {
+		background-color: #fff!important;
+		border: none!important;
+	}
+	.ms_whiteDesign .gamerProfilesContainer {
+		padding: 5px!important;
+		margin: 0!important;
+		background-color: rgba(0,0,0,.2);
+	}
+	.ms_whiteDesign .extraUserInfo {
+		padding: 5px!important;
+		background-color: rgba(0,0,0,.017)!important;
+	}
+	.ms_whiteDesign .messageUserBlock {
+		border: 1px solid rgb(245,245,245);
+	}
+
+	/* Темный дизайн */
+	.ms_darkDesign .userText {
+		background-color: #303030!important;
+		border: none!important;
+	}
+	.ms_darkDesign .gamerProfilesContainer {
+		padding: 5px!important;
+		margin: 0!important;
+		background-color: rgba(0,0,0,.2);
+	}
+	.ms_darkDesign .extraUserInfo {
+		padding: 5px!important;
+		background-color: rgba(255, 255, 255, 0.07)!important;
+	}
+	.ms_darkDesign .messageUserBlock {
+		border: 1px solid rgb(70, 70, 70);
+	}
+/* Костыль на всякий случай (случай беды) */
+.steamprofile {
+	display: none;
+}
+
+.conversationPostBitContainer {
+	display: none;
+}
+
+/* Цитаты, хайды, вложения и т.п. */
+blockquote.messageText .attribution {
+    border: none;
+    border-left: solid rgb(107, 166, 94) 7px;
+    font-style: italic;
+    font-size: 14px;
+    /* background: #fcfcfc; */
+    /* color: #345; */
+}
+blockquote.messageText .quoteContainer {
+    border: none;
+    border-left: solid rgb(107, 166, 94) 7px;
+    font-style: italic;
+    font-size: 12px;
+}
+blockquote.messageText blockquote {
+	border: none;
+    border-left: solid rgb(107, 166, 94) 7px;
+    font-style: italic;
+    font-size: 12px;
+}
+.attachedFiles .attachedFilesHeader {
+    border: none;
+    border-left: solid rgb(107, 166, 94) 7px;
+    font-style: italic;
+    font-size: 14px;
+}
+.attachedFiles .attachmentList {
+    border: none;
+    border-left: solid rgb(107, 166, 94) 7px;
+	border-radius: 0px!important;
+    font-style: italic;
+    font-size: 12px;
+}
+
+/* Враппер */
+#userBar .sticky_wrapper {
+	position: fixed!important;
+    z-index: 1000;
+}
+.cmn-miped-input {
+	border-radius: 40px;
+    text-align: center;
+    width: 36px;
+    height: 16px;
+    padding: 2px;
+    margin: 0 5px;
+    border: 2px #7fca80 solid;
+}
+.refreshButton {
+    color: #FFF;
+    border: 2px solid #3c5b35;
+    padding: 8px;
+    background: #3c5b35;
+    width: min-content;
+    border-radius: 10px;
+	cursor: pointer;
+}
+.listButton {
+	padding: 2px 2px;
+    font-size: 16px;
+	color: #FFF;
+    border: 2px solid #3c5b35;
+    background: #3c5b35;
+    width: min-content;
+    border-radius: 10px;
+	cursor: pointer;
+}
+
+/* Страница создания смайлов */
+.ms_createNew {
+    width: 400px;
+    padding: 50px 5px;
+	margin: 0 auto;
+}
+.ms_createNew input {
+	border-radius: 40px;
+    height: 16px;
+    padding: 2px;
+    margin: 0 5px;
+    border: 2px #7fca80 solid;
+    width: 322px;
+	margin: 3px 6px;
+}
+.smilieContainer {
+	max-height: 1000px!important;
+}
+.miped-smile-devider .miped-smile {
+	max-width: 26px;
+	max-height: 26px;
 }

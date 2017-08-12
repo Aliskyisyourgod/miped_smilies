@@ -8,83 +8,61 @@ var queryIsSimple = /^(#?[\w-]+|\.[\w-.]+)$/, eventsList = [], storageCache = _g
 /* Очистка консоли от мусора */
 console.clear();
 
+/* Очистка профилей постов от мусора */
+var massiveClear = [
+	$$('.steamprofile'),
+	$$('.conversationPostBitContainer'),
+	$$('.userBanner span'),
+	$$('.arrow')
+];
+
+var resultClearTrash = clearTrash (massiveClear, 1);
+
+log ('Результат очистки: '+resultClearTrash);
+
+if (location.href == 'http://miped.ru/f/usersmilies') {
+	document.title = 'Добавление собственных смайлов';
+	
+	fetch(getURL('/assets/createSmilies.html'))
+	.then(function(response){
+		return response.text();
+	})
+	.then(function(body){
+		document.body.innerHTML = body;
+
+		var uSmi = getStorage('userSmiles', true);
+		var putHTML = '';
+
+		uSmi.forEach( function (a, k) {
+			putHTML += '<div class="boss"><img src="'+a+'" class="i'+k+'" style="width: 26px; height: 26px;"><input value="'+a+'" onchange="document.querySelector(\'.i'+k+'\').src = this.value;"><span onclick="del('+k+');">X</span></div>';
+		});
+
+		$('#containerLink').innerHTML = putHTML;
+	});
+}
+
+var script = document.createElement('script');
+
+script.innerHTML = "function copySmiles() { var element = ''; get_storage('userSmiles', true).forEach(function (a) { element += '\\n'+a;"
+	+ "}); } function del(id) { document.querySelectorAll('#containerLink div')[id].outerHTML = ''; }"
+	+ "function addLink() { var alls = document.createElement('div'), call = document.querySelector('#containerLink div').length; alls.innerHTML = \"<div class='boss'><img src='' class='i\"+call+\"' style='width: 26px; height: 26px;'><input value='' onchange='document.querySelector(\'.i\"+call+\"\').src = this.value;'><span onclick='del(\"+call+\");'>X</span></div>\";"
+	+ "document.querySelector('#containerLink').appendChild(alls); } function saveSmilies(){ var massive = [], i, j = 0;"
+	+ "document.querySelectorAll('#containerLink input').forEach(function(a) { j++; massive[j-1] = a.value; i += '<img src=\"'+a.value+'\">' }); i += '<br>Вы вернётесь назад через 3 секунды'; setStorage('userSmiles', massive);"
+	+ "var div = document.createElement('div'); div.innerHTML = i; document.querySelector('#allSmiles').appendChild(div);"
+	+ "setTimeout(function(){location.href='http://miped.ru/f/';}, 3000);} function getStorage (key,value) { if (hasStorage(key)) {"
+	+ "return storageCache[key]; } return value !== undefined?value:null;} function setStorage (key,value) { storageCache = _getStorage();"
+	+ "storageCache[key] = value; localStorage.setItem('MipedSmiles',"
+	+ "JSON.stringify(storageCache)); return storageCache[key]; } function _getStorage () { var storage = localStorage.getItem('MipedSmiles');"
+	+ "if (storage === null) { storage = {}; } else { storage = JSON.parse(storage); } return storage; }";
+document.head.appendChild(script);
+
 /* Ну расширение почти загружено */
 document.body.style.opacity = 1;
 
 /**
- * Тут заполнять фичи титулов
+ * Тут заполнять фичи титулов (временно убрал)
  */
-var userTitles = {
-	'Aлександр': {
-		name: '<strong>Создатель MipedSmiles</strong>'
-	},
-	'Negezor': {
-		background: {
-			name: 'negezor.png'
-		}
-	},
-	'AnotherOne': {
-		name: 'Генерал канавы',
-		background: {
-			name: 'anotherone.png'
-		}
-	},
-	'Occultist': {
-		name: '<strong>ღ♥</strong>',
-		background: {
-			name: 'occulist.gif'
-		}
-	},
-	'flnn_human': {
-		background: {
-			name: 'flnn_human.gif'
-		}
-	},
-	'Lynxire': {
-		name: '<strong>Грибная богиня</strong>',
-		background: {
-			name: 'lynxire.png'
-		}
-	},
-	'bold222': {
-		background: {
-			name: 'bold222.jpg'
-		}
-	},
-	'_Trader Milk_': {
-		name: '<strong>трапоняшка</strong>',
-		background: {
-			name: 'trader_milk.gif'
-		}
-	},
-	'Dany1508': {
-		name: '<strong>ТОПОВЫЙ КУН</strong>',
-		background: {
-			name: 'dany1508.jpg'
-		}
-	},
-	'Logequm': {
-		background: {
-			name: 'logequm.gif'
-		}
-	},
-	'XUYAch19': {
-		name: '<strong>дошик</strong>',
-		background: {
-			name: 'huyach19.png'
-		}
-	},
-	'flind.exe': {
-		background: {
-			name: 'flind_exe.gif'
-		}
-	},
-	'Mgman': {
-		background: {
-			name: 'mgman.png'
-		}
-	}
-};
+var userTitles = {};
 
 /**
  * Тут список автозамены смайлов
@@ -173,7 +151,14 @@ var isDarkTheme = (function(){
 	var choosers = $$('footer .choosers a');
 
 	if (1 in choosers) {
-		return choosers[1].innerHTML === 'miped.ru dark';
+		var theme = choosers[1].innerHTML === 'miped.ru dark';
+		
+		if ($('.messageList')) {
+			if (theme) $('.messageList').classList.add('ms_darkDesign');
+			else $('.messageList').classList.add('ms_whiteDesign');
+		}
+		
+		return theme;
 	}
 
 	return getStorage('theme',false);
@@ -184,6 +169,10 @@ setStorage('theme',isDarkTheme);
 log('Активирована «'+(isDarkTheme?'тёмная':'светлая')+'» тема');
 
 $('html').classList.add('miped-theme-'+(isDarkTheme?'dark':'light'));
+
+document.querySelectorAll('.message.uix_threadAuthor .userText a.username').forEach(function (userNickName) {
+	userNickName.innerHTML += "<br>(автор темы)";
+});
 
 /**
  * ----
@@ -215,6 +204,7 @@ function updatePostTitle (post) {
 	if (post.classList.contains('miped-processed')) {
 		return;
 	}
+
 
 	var tooltip = $('.Tooltip',post);
 
@@ -279,6 +269,10 @@ function updatePostTitle (post) {
 	if ('postHandler' in user) {
 		user.postHandler(post);
 	}
+	
+	var resultClearTrash = clearTrash (massiveClear, 0);
+
+	log ('Результат очистки: '+resultClearTrash);
 }
 
 /**
@@ -300,26 +294,47 @@ fetch(getURL('/assets/settings.html'),{
 
 	var isEnabledVk = putStorage('vk',true);
 	var isEnabledTwitch = putStorage('twitch',true);
+	var isEnabledUserSmilies = putStorage('usersmile',true);
 	var isEnabledAnimenu = putStorage('animenu',false);
 	var isEnabledAutoReplace = putStorage('autoreplace',true);
 	var isEnabledMinusRep = putStorage('minusrep',false);
+	var isUserBarRight = putStorage('userbarright',true);
+	var isUserBarRightPX = putStorage('userbarright_px', "0");
+	var isUserBarBottom = putStorage('userbarbottom',false);
+	var isUserBarBottomPX = putStorage('userbarbottom_px', "4");
 
 	log('Emoji вконтакте «'+(isEnabledVk?'включены':'выключены')+'»');
 	log('Emoji твича «'+(isEnabledTwitch?'включены':'выключены')+'»');
+	log('Emoji юзера «'+(isEnabledUserSmilies?'включены':'выключены')+'»');
 	log('Аниме меню «'+(isEnabledAnimenu?'включено':'выключено')+'»');
 	log('Автозамена слов «'+(isEnabledAutoReplace?'включена':'выключена')+'»');
 	log('Изменение репутации «'+(isEnabledMinusRep?'включено':'выключено')+'»');
+	log('Юзербар расположен «'+(isUserBarRight?'справа':'слева')+' '+(isUserBarBottom?'сверху':'снизу')+'»');
 
 	$('#nt').src = getURL('/images/'+(isEnabledAnimenu?'animenu':'menu')+'.png');
 
 	var smilePanel = $('#smile_panel');
 
 	$$('input',smilePanel).forEach(function(input){
-		input.checked = getStorage(input.dataset.setting,false);
+		var e_name = input.dataset.setting;
+		
+		if (e_name == 'userbarright_px' || e_name == 'userbarbottom_px'){
+			input.value = getStorage(e_name, false);
+		} else {
+			input.checked = getStorage(e_name, false);
+		}
 	});
 
 	on(smilePanel,'change','input',function(event){
-		setStorage(event.target.dataset.setting,event.target.checked);
+		var e_name = event.target.dataset.setting;
+		var e_value = event.target.value;
+		
+		if (e_name == 'userbarright_px' || e_name == 'userbarbottom_px'){
+			e_value = (e_value == '') ? '0' : e_value;
+			setStorage(e_name, e_value);
+		} else {
+			setStorage(e_name, event.target.checked);
+		}
 	});
 
 	if (isEnabledMinusRep) {
@@ -334,24 +349,42 @@ fetch(getURL('/assets/settings.html'),{
 		} catch (e) {}
 	}
 
-	if (isEnabledAutoReplace) {
-		on('#QuickReply','mouseover','.button',function(){
-			if (bodyFrame === null) {
-				return;
-			}
+	if (controller === 'threads') {
+		if (isEnabledAutoReplace) {
+			on('#QuickReply','mouseover','.button',function(){
+				if (bodyFrame === null) {
+					return;
+				}
 
-			content = bodyFrame.innerHTML;
+				content = bodyFrame.innerHTML;
 
-			for (var key in smilies) {
-				content = content.replace(
-					new RegExp(' '+key,'ig'),
-					' <img src="'+smilies[key]+'" class="miped-smile">'
-				);
-			}
+				for (var key in smilies) {
+					content = content.replace(
+						new RegExp(' '+key,'ig'),
+						' <img src="'+smilies[key]+'" class="miped-smile">'
+					);
+				}
 
-			bodyFrame.innerHTML = content;
-		});
+				bodyFrame.innerHTML = content;
+			});
+		}
 	}
+	
+	var userBarStyle = '';
+	
+	if (isUserBarRight) {
+		userBarStyle += ' right: '+isUserBarRightPX+'px!important;';
+	} else {
+		userBarStyle += ' left: '+isUserBarRightPX+'px!important;';
+	}
+	
+	if (isUserBarBottom) {
+		userBarStyle += ' bottom: '+isUserBarBottomPX+'px!important;';
+	} else {
+		userBarStyle += ' top: '+isUserBarBottomPX+'px!important;';
+	}
+	
+	document.querySelector('#userBar .sticky_wrapper').style.cssText = userBarStyle;
 });
 
 /**
@@ -374,6 +407,7 @@ fetch(getURL('/assets/settings.html'),{
 
 		appendSmiles('vk');
 		appendSmiles('twitch');
+		appendUserSmiles();
 
 		var ul = createElement('ul',{
 			id: 'SmilieCategories1462645490',
@@ -427,6 +461,34 @@ fetch(getURL('/assets/settings.html'),{
 				});
 			} else {
 				fragment.appendChild(getImg(getURL('/images/'+name+'_off.png')));
+			}
+
+			devider.appendChild(fragment);
+
+			fragmentSmiles.appendChild(devider);
+		}
+		
+		function appendUserSmiles () {
+			var fragment = document.createDocumentFragment();
+			
+			var devider = createElement('div',{
+				class: 'miped-smile-devider'
+			});
+			
+			if (getStorage('usersmile',true)) {
+				fragment.appendChild(getImg(getURL('/images/userSmiles.png')));
+				
+				var blockSmiles = getStorage('userSmiles',true);
+
+				blockSmiles.forEach(function(src){
+					var li = createElement('li',{
+						'data-text': '',
+						class: 'Smilie'
+					});
+					li.appendChild(getImg(src));
+
+					fragment.appendChild(li);
+				});
 			}
 
 			devider.appendChild(fragment);
@@ -915,4 +977,27 @@ function stringifyQueryString (params) {
 	}
 
 	return qs.join('&');
+}
+
+/**
+ * Очищает необходимые элементы
+ */
+function clearTrash (massive, how) {
+	if (massive) {
+		if (how) {
+			massive.forEach (function (elements) {
+				elements.forEach (function (post) {
+					post.outerHTML = '';
+				});
+			});
+		} else {
+			massive.forEach (function (post) {
+				post.outerHTML = '';
+			});
+		}
+	} else {
+		return false;
+	}
+	
+	return true;
 }
