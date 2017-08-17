@@ -475,17 +475,21 @@ fetch(getURL('/assets/settings.html'),{
 			if (getStorage('usersmile',true)) {
 				fragment.appendChild(getImg(getURL('/images/userSmiles.png')));
 				
-				var blockSmiles = getStorage('userSmiles',true);
+				var blockSmiles = putStorage('userSmiles',true);
 
-				blockSmiles.forEach(function(src){
-					var li = createElement('li',{
-						'data-text': '',
-						class: 'Smilie'
+				if (isArray(blockSmiles)) {
+					blockSmiles.forEach(function(src){
+						var li = createElement('li',{
+							'data-text': '',
+							class: 'Smilie'
+						});
+						li.appendChild(getImg(src));
+
+						fragment.appendChild(li);
 					});
-					li.appendChild(getImg(src));
-
-					fragment.appendChild(li);
-				});
+				} else {
+					setStorage('userSmiles', ['']);
+				}
 			}
 
 			devider.appendChild(fragment);
@@ -978,6 +982,11 @@ function stringifyQueryString (params) {
 
 /**
  * Очищает необходимые элементы
+ *
+ * @param array massive
+ * @param string how
+ *
+ * @return boolean
  */
 function clearTrash (massive, how) {
 	if (massive) {
@@ -997,4 +1006,15 @@ function clearTrash (massive, how) {
 	}
 	
 	return true;
+}
+
+/**
+ * Проверка, является ли переменная массивом
+ *
+ * @param object a
+ *
+ * @return boolean
+ */
+function isArray (a) {
+    return (typeof a == "object") && (a instanceof Array);
 }

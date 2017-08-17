@@ -1,18 +1,22 @@
 {
-   "content_scripts": [ {
-      "css": [ "extension.css" ],
-      "js": [ "extension.js" ],
-      "matches": [ "*://miped.ru/f/*" ]
-   } ],
-   "description": "Использование сторонних смайлов для сообщений и другие улучшения для miped.ru",
-   "icons": {
-      "128": "/images/favicon.png",
-      "16": "/images/favicon.png",
-      "48": "/images/favicon.png"
-   },
-   "manifest_version": 2,
-   "name": "MipedSmiles",
-   "permissions": [ "cookies", "*://miped.ru/*" ],
-   "version": "0.5.1.0",
-   "web_accessible_resources": [ "/assets/*.html", "/assets/*.js", "/images/banner/*.png", "/images/banner/*.gif", "/images/banner/*.jpg", "/assets/smiles.txt", "/images/*.png", "/images/*.gif", "/images/*.jpg" ]
+	"content_scripts": [ {
+		"css": [ "extension.css" ],
+		"js": [ "extension.js" ],
+		"matches": [ "*://miped.ru/f/*" ]
+	} ],
+	"description": "Использование сторонних смайлов для сообщений и другие улучшения для miped.ru",
+	"icons": {
+		"128": "/images/favicon.png",
+		"16": "/images/favicon.png",
+		"48": "/images/favicon.png"
+	},
+	"manifest_version": 2,
+	"name": "MipedSmiles",
+	"permissions": [ "cookies", "tabs", "*://miped.ru/*" ],
+	"version": "0.5.1.1",
+	"page_action": {
+		"default_popup": "popup.html",
+		"scripts": ["background.js"]
+	},
+	"web_accessible_resources": [ "/assets/*.html", "/assets/*.js", "/images/banner/*.png", "/images/banner/*.gif", "/images/banner/*.jpg", "/assets/smiles.txt", "/images/*.png", "/images/*.gif", "/images/*.jpg" ]
 }
