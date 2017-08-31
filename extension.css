@@ -623,7 +623,7 @@ blockquote.messageText blockquote {
 /* Страница создания смайлов */
 .ms_createNew {
 	border-radius: 3px;
-    width: 420px;
+    width: 430px;
 	height: 500px;
     padding: 10px;
 	background: rgb(107, 166, 94);
@@ -641,6 +641,7 @@ blockquote.messageText blockquote {
 	height: 420px;
 	background: #FFF;
 	padding: 0 10px;
+	overflow-y: scroll;
 }
 .ms_save {
 	position: absolute;

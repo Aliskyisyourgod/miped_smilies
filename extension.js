@@ -173,7 +173,7 @@ function updatePostTitle (post) {
 	var tooltip = $('.Tooltip',post);
 
 	if (tooltip !== null) {
-		tooltip.style.display = 'none';
+		/*tooltip.style.display = 'none';*/
 		$('.avatar',post).classList.add('miped-avatar-online');
 	}
 
@@ -315,7 +315,7 @@ fetch(getURL('/assets/settings.html'),{
 
 			var putHTML = '';
 
-			getStorage('userSmiles', true).forEach( function (a, k) {
+			putStorage('userSmiles', true).forEach( function (a, k) {
 				putHTML += '<div class="boss i'+k+'"><img src="'+a+'" class="i'+k+' ms_image" style="width: 26px; height: 26px;"><input value="'+a+'" onchange="document.querySelector(\'.i'+k+'\').src = this.value;"><span onclick="del('+k+');" class="listButton" style="font-size: 12px;">D</span></div>';
 			});
 
